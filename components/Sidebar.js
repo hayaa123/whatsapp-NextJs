@@ -9,8 +9,10 @@ import {useCollection} from 'react-firebase-hooks/firestore';
 import { auth ,db } from '../firebase';
 import * as EmailValidator from "email-validator"
 import Chat from './Chat';
+import getRecipientEmail from '../utils/getRecipientEmail';
 function Sidebar() {
   const [user] = useAuthState(auth);
+
   const userChatRef = db.collection("chats").where ('users','array-contains',user.email)
   const [chatSnapshot] = useCollection(userChatRef)
   const createChat = ()=>{
@@ -40,7 +42,7 @@ function Sidebar() {
         <Container>
           {/* Header */}
           <Header>
-            <UserAvatar onClick={()=>{auth.signOut()}}/>
+            <UserAvatar src={user.photoURL} onClick={()=>{auth.signOut()}}/>
             <IconContainer>
               <IconButton>
                 <ChatIcon/>
@@ -60,7 +62,7 @@ function Sidebar() {
 
           {/* List of Chats */}
           {chatSnapshot?.docs.map(chat => (
-              <Chat key={chat.id} id ={chat.id} user={chat.data}/>
+              <Chat key={chat.id} id ={chat.id} users={chat.data().users}/>
           ))}
 
         </Container>        
@@ -85,7 +87,7 @@ const Header = styled.div`
  border-bottom: 1px solid whitesmoke
 `
 const Container = styled.div`
- width: 40%;
+ /* width: 40%; */
 `;
 
 
